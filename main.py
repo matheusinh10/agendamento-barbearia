@@ -326,3 +326,16 @@ def relatorio_de_faltas():
            FROM agendamentos a JOIN servicos s ON s.id = a.servico_id
            WHERE a.status = 'faltou'""").fetchone()
     return {"total_de_faltas": r["total"], "renda_perdida": r["perdido"]}
+
+
+# ---------- Saúde do serviço ----------
+@app.get("/healthz", tags=["Operação"])
+def healthz():
+    """Verifica se a API está no ar e se o banco responde."""
+    try:
+        con = conectar()
+        con.execute("SELECT 1")
+        con.close()
+    except sqlite3.Error:
+        raise HTTPException(503, "Banco de dados indisponível")
+    return {"status": "ok"}
